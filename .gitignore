@@ -1,0 +1,14 @@
+Terraform.zip
+Terraform/*.tfvars
+.env
+code/.venv
+Terraform/.terraform.lock.hcl
+Terraform/.terraform/*
+Terraform/terraform.tfstate
+Terraform/terraform.tfstate.backup
+Terraform/.terraform.tfstate.lock.info
+RESULTS/*.json
+*_command
+notes
+query.sh
+code/__pycache__/
