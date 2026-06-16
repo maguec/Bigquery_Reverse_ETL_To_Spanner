@@ -11,6 +11,7 @@ resource "google_spanner_instance" "spanner_instance" {
   display_name                 = "spanner-${local.suffix}"
   project                      = var.gcp_project_id
   processing_units             = 100
+  edition                      = "ENTERPRISE"
   default_backup_schedule_type = "NONE"
   depends_on                   = [google_project_service.spanner]
 }
@@ -41,19 +42,4 @@ resource "google_spanner_database_iam_member" "spanner_bq_access" {
   database = google_spanner_database.spanner_db.name
   role     = "roles/spanner.databaseUser"
   member   = "serviceAccount:${google_bigquery_connection.spanner_connection.cloud_resource[0].service_account_id}"
-}
-
-output "spanner_instance_id" {
-  value       = google_spanner_instance.spanner_instance.id
-  description = "The ID of the Spanner instance created"
-}
-
-output "spanner_database_id" {
-  value       = google_spanner_database.spanner_db.id
-  description = "The ID of the Spanner database created"
-}
-
-output "bq_spanner_connection_id" {
-  value       = google_bigquery_connection.spanner_connection.id
-  description = "The ID of the BigQuery connection to Spanner"
 }
