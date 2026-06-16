@@ -17,9 +17,11 @@ resource "google_spanner_instance" "spanner_instance" {
 }
 
 resource "google_spanner_database" "spanner_db" {
-  instance = google_spanner_instance.spanner_instance.name
-  name     = "db_${local.suffix}"
-  project  = var.gcp_project_id
+  instance            = google_spanner_instance.spanner_instance.name
+  name                = "db_${local.suffix}"
+  project             = var.gcp_project_id
+  ddl                 = compact([for s in split(";", file("${path.module}/db.ddl")) : trimspace(s)])
+  deletion_protection = false
 }
 
 resource "google_bigquery_connection" "spanner_connection" {
