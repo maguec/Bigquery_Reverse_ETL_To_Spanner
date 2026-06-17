@@ -54,6 +54,9 @@ INTERLEAVE IN PARENT `Developer` ON DELETE CASCADE;
 -- Creates a standard secondary index for reverse lookups on the PR table
 CREATE INDEX `IN_PR_ReverseIndex` ON `PR`(`URL`);
 
+-- Create FK on PR for the Pagerank Call
+ALTER TABLE `PR` ADD CONSTRAINT `FK_PR_Repo` FOREIGN KEY (`URL`) REFERENCES `Repo` (`URL`);
+
 -- Creates or updates the property graph Github
 CREATE OR REPLACE PROPERTY GRAPH `Github`
   NODE TABLES (
