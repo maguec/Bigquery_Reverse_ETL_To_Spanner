@@ -42,6 +42,18 @@ ALTER TABLE `IN_LANGUAGE` ADD CONSTRAINT `FK_Language_IN_LANGUAGE` FOREIGN KEY (
 -- Creates a reverse edge index on edge table IN_LANGUAGE to optimize reverse edge traversal to source node Language.
 CREATE INDEX `IN_LANGUAGE_ReverseIndex` ON `IN_LANGUAGE` (`Language`), INTERLEAVE IN `Language`;
 
+-- Create the edge PR.
+CREATE TABLE `PR` (
+  `Developer` STRING(MAX) NOT NULL,
+  `URL` STRING(MAX) NOT NULL,
+  `SHA1` STRING(MAX) NOT NULL,
+  `Merged` BOOL NOT NULL
+) PRIMARY KEY (`Developer`, `URL`, `SHA1`),
+INTERLEAVE IN PARENT `Developer` ON DELETE CASCADE;
+
+-- Creates a standard secondary index for reverse lookups on the PR table
+CREATE INDEX `IN_PR_ReverseIndex` ON `PR`(`URL`);
+
 -- Creates or updates the property graph Github
 CREATE OR REPLACE PROPERTY GRAPH `Github`
   NODE TABLES (
@@ -56,7 +68,6 @@ CREATE OR REPLACE PROPERTY GRAPH `Github`
       LABEL `Language` PROPERTIES (
         `Language`
       ),
-    -- Added the Developer node table so the OWNS edge has a valid source
     `Developer` KEY(`Developer`)
       LABEL `Developer` PROPERTIES (
         `Developer`
@@ -70,12 +81,19 @@ CREATE OR REPLACE PROPERTY GRAPH `Github`
         `URL`,
         `Language`
       ),
-    -- Added the new OWNS edge table
     `OWNS` KEY (`Developer`, `URL`)
       SOURCE KEY (`Developer`) REFERENCES `Developer` (`Developer`)
       DESTINATION KEY (`URL`) REFERENCES `Repo` (`URL`)
       LABEL `OWNS` PROPERTIES (
         `Developer`,
         `URL`
+      ),
+    `PR` KEY (`Developer`, `URL`, `SHA1`)
+      SOURCE KEY (`Developer`) REFERENCES `Developer` (`Developer`)
+      DESTINATION KEY (`URL`) REFERENCES `Repo` (`URL`)
+      LABEL `PR` PROPERTIES (
+        `Developer`,
+        `URL`,
+        `SHA1`
       )
   );
