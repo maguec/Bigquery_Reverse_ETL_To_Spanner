@@ -97,6 +97,7 @@ CREATE OR REPLACE PROPERTY GRAPH `Github`
       LABEL `PR` PROPERTIES (
         `Developer`,
         `URL`,
+        `Merged`,
         `SHA1`
       )
   );
